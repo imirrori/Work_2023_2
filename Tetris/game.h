@@ -7,10 +7,18 @@ enum Politra
     MENU
 };
 
+enum Menu
+{
+    START_GAME,
+    RECORDS,
+    EXIT
+};
+
 struct Game
 {
     int width;
     int height;
+    int currentMenuOption;
 };
 
 void InitGame(Game* game);

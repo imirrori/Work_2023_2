@@ -4,7 +4,7 @@ int main()
 {
     Game game;
     InitGame(&game);
-    ShowScreensaver(&game);
+    //ShowScreensaver(&game);
     ShowMenu(&game);
 
     DeinitGame(&game);

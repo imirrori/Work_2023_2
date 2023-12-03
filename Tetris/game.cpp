@@ -17,10 +17,12 @@ void InitGame(Game* game)
 
     game->height = 0;
     game->width = 0;
+    game->currentMenuOption = START_GAME;
 
     initscr();
     noecho();
     curs_set(0);
+    keypad(stdscr, true);
 
     getmaxyx(stdscr, game->height, game->width);
 
@@ -74,12 +76,44 @@ void ShowMenu(Game* game)
         }
     }
 
-    move(game->height / 2 - 1, game->width / 2 - 5);
-    printw("Start game");
-    move(game->height / 2 + 0, game->width / 2 - 5);
-    printw("Records");
-    move(game->height / 2 + 1, game->width / 2 - 5);
-    printw("Exit");
+    int ch;
+    do {
+        move(game->height / 2 - 1, game->width / 2 - 5);
+        printw("%cStart game", game->currentMenuOption == START_GAME ? '*' : ' ');
+        move(game->height / 2 + 0, game->width / 2 - 5);
+        printw("%cRecords", game->currentMenuOption == RECORDS ? '*' : ' ');
+        move(game->height / 2 + 1, game->width / 2 - 5);
+        printw("%cExit", game->currentMenuOption == EXIT ? '*' : ' ');
 
-    getch();
+        ch = getch();
+
+        switch(ch)
+        {
+            case 10: //KEY_ENTER
+            {
+                if (game->currentMenuOption == EXIT)
+                {
+                    return;
+                }
+                break;
+            }
+            case KEY_DOWN:
+            {
+                game->currentMenuOption += 1;
+                if (game->currentMenuOption > EXIT) {
+                    game->currentMenuOption = START_GAME;
+                }
+                break;
+            }
+            case KEY_UP:
+            {
+                game->currentMenuOption -= 1;
+                if (game->currentMenuOption < START_GAME) {
+                    game->currentMenuOption = EXIT;
+                }
+                break;
+            }
+        }
+
+    } while (true);
 }
