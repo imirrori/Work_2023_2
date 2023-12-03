@@ -1,14 +1,11 @@
 #include "game.h"
-#include "init.h"
 
 int main()
 {
-  Game game;
+    Game game;
+    InitGame(&game);
+    ShowScreensaver(&game);
 
-  InitGame(&game);
-  Init(&game);
-
-
-  Deinit();
-  return 0;
+    DeinitGame(&game);
+    return 0;
 }
