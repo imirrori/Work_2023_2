@@ -3,7 +3,8 @@
 
 enum Politra
 {
-    SCRENSERVER = 1
+    SCRENSERVER = 1,
+    MENU
 };
 
 struct Game
@@ -16,5 +17,6 @@ void InitGame(Game* game);
 void DeinitGame(Game* game);
 
 void ShowScreensaver(Game* game);
+void ShowMenu(Game* game);
 
 #endif // GAME_H
