@@ -4,7 +4,8 @@
 enum Politra
 {
     SCRENSERVER = 1,
-    MENU
+    MENU,
+    FIELD,
 };
 
 enum Menu
@@ -26,5 +27,6 @@ void DeinitGame(Game* game);
 
 void ShowScreensaver(Game* game);
 void ShowMenu(Game* game);
+void ShowField(Game* game);
 
 #endif // GAME_H

@@ -7,6 +7,7 @@ void InitPolitra()
     start_color();
     init_pair(SCRENSERVER, COLOR_WHITE, COLOR_BLUE);
     init_pair(MENU, COLOR_WHITE, COLOR_BLACK);
+    init_pair(FIELD, COLOR_WHITE, COLOR_BLACK);
 }
 
 void InitGame(Game* game)
@@ -95,6 +96,10 @@ void ShowMenu(Game* game)
                 {
                     return;
                 }
+                else if (game->currentMenuOption == START_GAME)
+                {
+                    ShowField(game);
+                }
                 break;
             }
             case KEY_DOWN:
@@ -114,6 +119,40 @@ void ShowMenu(Game* game)
                 break;
             }
         }
-
     } while (true);
+
+    attroff(COLOR_PAIR(MENU));
+}
+
+void ShowField(Game* game)
+{
+    if (game == nullptr) {
+        return;
+    }
+
+    attron(COLOR_PAIR(FIELD));
+    for (int i = 0; i < game->height; ++i) {
+        for (int j = 0; j < game->width; ++j) {
+            move(i, j);
+            addch(' ');
+        }
+    }
+
+    move(0, 1);
+    printw("+------------------+");
+    for (int i = 1; i < 23; ++i) {
+        move(i, 1);
+        printw("|                  |");
+    }
+    move(23, 1);
+    printw("+------------------+");
+
+    move(0, 21);
+    printw("+--------------+");
+    move(1, 21);
+    printw("| Score: 0     |");
+    move(2, 21);
+    printw("+--------------+");
+
+    attroff(COLOR_PAIR(FIELD));
 }
