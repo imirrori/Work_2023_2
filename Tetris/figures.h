@@ -1,12 +1,22 @@
 #ifndef FIGURES_H
 #define FIGURES_H
 
+enum FIGURE_TYPE
+{
+    SQUERE,
+    LINE,
+    Z,
+    F,
+    //--------
+    COUNT
+};
+
 struct Figure
 {
     int values[4][4];
 };
 
-constexpr Figure Figures[] = {
+constexpr Figure Figures[COUNT] = {
     Figure{ .values = {
         {0, 0, 0, 0},
         {0, 1, 1, 0},

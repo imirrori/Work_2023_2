@@ -1,13 +1,17 @@
 #include "game.h"
 
+#include <stdlib.h>
+#include <time.h>
+
 #include <ncurses.h>
 
 void InitPolitra()
 {
     start_color();
-    init_pair(SCRENSERVER, COLOR_WHITE, COLOR_BLUE);
-    init_pair(MENU, COLOR_WHITE, COLOR_BLACK);
-    init_pair(FIELD, COLOR_WHITE, COLOR_BLACK);
+    init_pair(POLITRA_SCRENSERVER, COLOR_WHITE, COLOR_BLUE);
+    init_pair(POLITRA_MENU, COLOR_WHITE, COLOR_BLACK);
+    init_pair(POLITRA_FIELD, COLOR_WHITE, COLOR_BLACK);
+    init_pair(POLITRA_FIGURE, COLOR_WHITE, COLOR_GREEN);
 }
 
 void InitGame(Game* game)
@@ -16,9 +20,12 @@ void InitGame(Game* game)
         return;
     }
 
+    srand(time(NULL));
+
     game->height = 0;
     game->width = 0;
     game->currentMenuOption = START_GAME;
+    game->cuurent_figure = rand() % COUNT;
 
     initscr();
     noecho();
@@ -28,6 +35,8 @@ void InitGame(Game* game)
     getmaxyx(stdscr, game->height, game->width);
 
     InitPolitra();
+
+
 }
 
 void DeinitGame(Game*)
@@ -41,7 +50,7 @@ void ShowScreensaver(Game* game)
         return;
     }
 
-    attron(COLOR_PAIR(SCRENSERVER));
+    attron(COLOR_PAIR(POLITRA_SCRENSERVER));
     for (int i = 0; i < game->height; ++i) {
         for (int j = 0; j < game->width; ++j) {
             move(i, j);
@@ -58,7 +67,7 @@ void ShowScreensaver(Game* game)
     printw("** *** ******* ***  ****** ******** ");
     move(game->height / 2 + 3, game->width / 2 - 20);
     printw("** ***     *** *** **  *     **     ");
-    attroff(COLOR_PAIR(SCRENSERVER));
+    attroff(COLOR_PAIR(POLITRA_SCRENSERVER));
 
     getch();
 }
@@ -69,7 +78,7 @@ void ShowMenu(Game* game)
         return;
     }
 
-    attron(COLOR_PAIR(MENU));
+    attron(COLOR_PAIR(POLITRA_MENU));
     for (int i = 0; i < game->height; ++i) {
         for (int j = 0; j < game->width; ++j) {
             move(i, j);
@@ -121,7 +130,7 @@ void ShowMenu(Game* game)
         }
     } while (true);
 
-    attroff(COLOR_PAIR(MENU));
+    attroff(COLOR_PAIR(POLITRA_MENU));
 }
 
 void ShowField(Game* game)
@@ -130,7 +139,7 @@ void ShowField(Game* game)
         return;
     }
 
-    attron(COLOR_PAIR(FIELD));
+    attron(COLOR_PAIR(POLITRA_FIELD));
     for (int i = 0; i < game->height; ++i) {
         for (int j = 0; j < game->width; ++j) {
             move(i, j);
@@ -153,6 +162,32 @@ void ShowField(Game* game)
     printw("| Score: 0     |");
     move(2, 21);
     printw("+--------------+");
+    move(3, 21);
+    printw("|              |");
+    for(int j = 0; j < 4; ++j)
+    {
+        move(4 + j, 21);
+        printw("|   ");
+        for(int i = 0; i < 4; ++i)
+        {
+            if (Figures[game->cuurent_figure].values[i][j]) {
+                attron(COLOR_PAIR(POLITRA_FIGURE));
+            } else {
+                attron(COLOR_PAIR(POLITRA_FIELD));
+            }
+            addch(' ');
+            if (Figures[game->cuurent_figure].values[i][j]) {
+                attroff(COLOR_PAIR(POLITRA_FIGURE));
+            } else {
+                attroff(COLOR_PAIR(POLITRA_FIELD));
+            }
+        }
+        printw("       |");
+    }
+    move(8, 21);
+    printw("|              |");
+    move(9, 21);
+    printw("+--------------+");
 
-    attroff(COLOR_PAIR(FIELD));
+    attroff(COLOR_PAIR(POLITRA_FIELD));
 }

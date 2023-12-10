@@ -1,14 +1,17 @@
 #ifndef GAME_H
 #define GAME_H
 
-enum Politra
+#include "figures.h"
+
+enum POLITRA
 {
-    SCRENSERVER = 1,
-    MENU,
-    FIELD,
+    POLITRA_SCRENSERVER = 1,
+    POLITRA_MENU,
+    POLITRA_FIELD,
+    POLITRA_FIGURE,
 };
 
-enum Menu
+enum MENU
 {
     START_GAME,
     RECORDS,
@@ -20,6 +23,7 @@ struct Game
     int width;
     int height;
     int currentMenuOption;
+    int cuurent_figure;
 };
 
 void InitGame(Game* game);
