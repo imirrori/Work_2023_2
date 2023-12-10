@@ -3,6 +3,8 @@
 
 #include "figures.h"
 
+#include <thread>
+
 enum POLITRA
 {
     POLITRA_SCRENSERVER = 1,
@@ -23,7 +25,11 @@ struct Game
     int width;
     int height;
     int currentMenuOption;
-    int cuurent_figure;
+    int next_figure;
+    int current_figure;
+
+    bool is_exit;
+    std::thread* th;
 };
 
 void InitGame(Game* game);

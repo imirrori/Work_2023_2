@@ -3,6 +3,7 @@
 
 enum FIGURE_TYPE
 {
+    NONE = -1,
     SQUERE,
     LINE,
     Z,

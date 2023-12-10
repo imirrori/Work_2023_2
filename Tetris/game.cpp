@@ -5,6 +5,19 @@
 
 #include <ncurses.h>
 
+void ThreanFunc(Game* game)
+{
+    if (game == nullptr) {
+        return;
+    }
+
+    while(!game->is_exit)
+    {
+
+    }
+
+}
+
 void InitPolitra()
 {
     start_color();
@@ -25,7 +38,11 @@ void InitGame(Game* game)
     game->height = 0;
     game->width = 0;
     game->currentMenuOption = START_GAME;
-    game->cuurent_figure = rand() % COUNT;
+    game->next_figure = rand() % COUNT;
+    game->current_figure = NONE;
+
+    game->is_exit = false;
+    game->th = new std::thread(ThreanFunc, game);
 
     initscr();
     noecho();
@@ -35,12 +52,21 @@ void InitGame(Game* game)
     getmaxyx(stdscr, game->height, game->width);
 
     InitPolitra();
-
-
 }
 
-void DeinitGame(Game*)
+void DeinitGame(Game* game)
 {
+    if (game == nullptr) {
+        return;
+    }
+
+    if (game->th && game->th->joinable())
+    {
+        game->th->join();
+    }
+
+    delete game->th;
+
     endwin();
 }
 
@@ -103,6 +129,7 @@ void ShowMenu(Game* game)
             {
                 if (game->currentMenuOption == EXIT)
                 {
+                    game->is_exit = true;
                     return;
                 }
                 else if (game->currentMenuOption == START_GAME)
@@ -170,13 +197,13 @@ void ShowField(Game* game)
         printw("|   ");
         for(int i = 0; i < 4; ++i)
         {
-            if (Figures[game->cuurent_figure].values[i][j]) {
+            if (Figures[game->next_figure].values[i][j]) {
                 attron(COLOR_PAIR(POLITRA_FIGURE));
             } else {
                 attron(COLOR_PAIR(POLITRA_FIELD));
             }
             addch(' ');
-            if (Figures[game->cuurent_figure].values[i][j]) {
+            if (Figures[game->next_figure].values[i][j]) {
                 attroff(COLOR_PAIR(POLITRA_FIGURE));
             } else {
                 attroff(COLOR_PAIR(POLITRA_FIELD));
