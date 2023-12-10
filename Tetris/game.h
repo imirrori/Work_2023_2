@@ -20,15 +20,26 @@ enum MENU
     EXIT
 };
 
+enum GAME_STATE
+{
+    IN_MENU,
+    IN_GAME,
+    IN_EXIT
+};
+
 struct Game
 {
     int width;
     int height;
-    int currentMenuOption;
+    int current_menu_option;
+
     int next_figure;
     int current_figure;
+    int current_x;
+    int current_y;
+    int figure_speed;
 
-    bool is_exit;
+    int current_state;
     std::thread* th;
 };
 

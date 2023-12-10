@@ -5,17 +5,73 @@
 
 #include <ncurses.h>
 
+#include <chrono>
+
 void ThreanFunc(Game* game)
 {
     if (game == nullptr) {
         return;
     }
 
-    while(!game->is_exit)
-    {
+    auto begin = std::chrono::steady_clock::now();
+    while(game->current_state != IN_EXIT) {
 
+        if (game->current_state == IN_GAME) {
+
+            if (game->current_figure == NONE) {
+                game->current_figure = game->next_figure;
+                game->next_figure = rand() % COUNT;
+            }
+            const auto now = std::chrono::steady_clock::now();
+            const auto diff = now - begin;
+
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(diff).count() > 300) {
+                clear();
+                ShowField(game);
+                refresh();
+                ++game->current_x;
+                begin = std::chrono::steady_clock::now();
+            }
+        } else if (game->current_state == IN_MENU) {
+            const auto now = std::chrono::steady_clock::now();
+            const auto diff = now - begin;
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(diff).count() > 30) {
+                clear();
+                attron(COLOR_PAIR(POLITRA_MENU));
+                for (int i = 0; i < game->height; ++i) {
+                    for (int j = 0; j < game->width; ++j) {
+                        move(i, j);
+                        addch(' ');
+                    }
+                }
+
+                move(game->height / 2 - 1, game->width / 2 - 5);
+                printw("%cStart game", game->current_menu_option == START_GAME ? '*' : ' ');
+                move(game->height / 2 + 0, game->width / 2 - 5);
+                printw("%cRecords", game->current_menu_option == RECORDS ? '*' : ' ');
+                move(game->height / 2 + 1, game->width / 2 - 5);
+                printw("%cExit", game->current_menu_option == EXIT ? '*' : ' ');
+                attroff(COLOR_PAIR(POLITRA_MENU));
+                refresh();
+                begin = std::chrono::steady_clock::now();
+            }
+        }
     }
+}
 
+void PrintFigurePoint(int figure, int x, int y)
+{
+    if (Figures[figure].values[x][y]) {
+        attron(COLOR_PAIR(POLITRA_FIGURE));
+    } else {
+        attron(COLOR_PAIR(POLITRA_FIELD));
+    }
+    addch(' ');
+    if (Figures[figure].values[x][y]) {
+        attroff(COLOR_PAIR(POLITRA_FIGURE));
+    } else {
+        attroff(COLOR_PAIR(POLITRA_FIELD));
+    }
 }
 
 void InitPolitra()
@@ -37,12 +93,15 @@ void InitGame(Game* game)
 
     game->height = 0;
     game->width = 0;
-    game->currentMenuOption = START_GAME;
+    game->current_menu_option = START_GAME;
+
     game->next_figure = rand() % COUNT;
     game->current_figure = NONE;
+    game->current_x = -4;
+    game->current_y = 5;
+    game->figure_speed = 1;
 
-    game->is_exit = false;
-    game->th = new std::thread(ThreanFunc, game);
+    game->current_state = IN_MENU;
 
     initscr();
     noecho();
@@ -52,6 +111,8 @@ void InitGame(Game* game)
     getmaxyx(stdscr, game->height, game->width);
 
     InitPolitra();
+
+    game->th = new std::thread(ThreanFunc, game);
 }
 
 void DeinitGame(Game* game)
@@ -104,60 +165,42 @@ void ShowMenu(Game* game)
         return;
     }
 
-    attron(COLOR_PAIR(POLITRA_MENU));
-    for (int i = 0; i < game->height; ++i) {
-        for (int j = 0; j < game->width; ++j) {
-            move(i, j);
-            addch(' ');
-        }
-    }
-
     int ch;
     do {
-        move(game->height / 2 - 1, game->width / 2 - 5);
-        printw("%cStart game", game->currentMenuOption == START_GAME ? '*' : ' ');
-        move(game->height / 2 + 0, game->width / 2 - 5);
-        printw("%cRecords", game->currentMenuOption == RECORDS ? '*' : ' ');
-        move(game->height / 2 + 1, game->width / 2 - 5);
-        printw("%cExit", game->currentMenuOption == EXIT ? '*' : ' ');
-
         ch = getch();
 
         switch(ch)
         {
             case 10: //KEY_ENTER
             {
-                if (game->currentMenuOption == EXIT)
+                if (game->current_menu_option == EXIT)
                 {
-                    game->is_exit = true;
-                    return;
+                    game->current_state = IN_EXIT;
                 }
-                else if (game->currentMenuOption == START_GAME)
+                else if (game->current_menu_option == START_GAME)
                 {
-                    ShowField(game);
+                    game->current_state = IN_GAME;
                 }
                 break;
             }
             case KEY_DOWN:
             {
-                game->currentMenuOption += 1;
-                if (game->currentMenuOption > EXIT) {
-                    game->currentMenuOption = START_GAME;
+                game->current_menu_option += 1;
+                if (game->current_menu_option > EXIT) {
+                    game->current_menu_option = START_GAME;
                 }
                 break;
             }
             case KEY_UP:
             {
-                game->currentMenuOption -= 1;
-                if (game->currentMenuOption < START_GAME) {
-                    game->currentMenuOption = EXIT;
+                game->current_menu_option -= 1;
+                if (game->current_menu_option < START_GAME) {
+                    game->current_menu_option = EXIT;
                 }
                 break;
             }
         }
-    } while (true);
-
-    attroff(COLOR_PAIR(POLITRA_MENU));
+    } while (game->current_state != IN_EXIT);
 }
 
 void ShowField(Game* game)
@@ -170,17 +213,26 @@ void ShowField(Game* game)
     for (int i = 0; i < game->height; ++i) {
         for (int j = 0; j < game->width; ++j) {
             move(i, j);
-            addch(' ');
+            if (i >= game->current_x && i <= game->current_x + 3 &&
+                j >= game->current_y && j <= game->current_y + 3)
+            {
+                PrintFigurePoint(
+                    game->current_figure,
+                    game->current_x - i,
+                    game->current_y - j);
+            } else {
+                addch(' ');
+            }
         }
     }
 
-    move(0, 1);
-    printw("+------------------+");
-    for (int i = 1; i < 23; ++i) {
-        move(i, 1);
-        printw("|                  |");
-    }
-    move(23, 1);
+    //move(0, 1);
+   // printw("+------------------+");
+   // for (int i = 1; i < 23; ++i) {
+    //    move(i, 1);
+    //    printw("|                  |");
+   // }
+   // move(23, 1);
     printw("+------------------+");
 
     move(0, 21);
@@ -196,19 +248,7 @@ void ShowField(Game* game)
         move(4 + j, 21);
         printw("|   ");
         for(int i = 0; i < 4; ++i)
-        {
-            if (Figures[game->next_figure].values[i][j]) {
-                attron(COLOR_PAIR(POLITRA_FIGURE));
-            } else {
-                attron(COLOR_PAIR(POLITRA_FIELD));
-            }
-            addch(' ');
-            if (Figures[game->next_figure].values[i][j]) {
-                attroff(COLOR_PAIR(POLITRA_FIGURE));
-            } else {
-                attroff(COLOR_PAIR(POLITRA_FIELD));
-            }
-        }
+            PrintFigurePoint(game->next_figure, i, j);
         printw("       |");
     }
     move(8, 21);
