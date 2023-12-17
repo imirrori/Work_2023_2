@@ -27,11 +27,20 @@ enum GAME_STATE
     IN_EXIT
 };
 
+struct Field
+{
+    static constexpr int Width = 18;
+    static constexpr int Height = 22;
+
+    bool data[Width][Height] = {};
+};
+
 struct Game
 {
     int width;
     int height;
     int current_menu_option;
+    Field field;
 
     int next_figure;
     int current_figure;

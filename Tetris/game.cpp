@@ -6,6 +6,7 @@
 #include <ncurses.h>
 
 #include <chrono>
+#include <iostream>
 
 void ThreanFunc(Game* game)
 {
@@ -17,8 +18,9 @@ void ThreanFunc(Game* game)
     while(game->current_state != IN_EXIT) {
 
         if (game->current_state == IN_GAME) {
-
             if (game->current_figure == NONE) {
+                game->current_x = 5;
+                game->current_y = -4;
                 game->current_figure = game->next_figure;
                 game->next_figure = rand() % COUNT;
             }
@@ -29,7 +31,12 @@ void ThreanFunc(Game* game)
                 clear();
                 ShowField(game);
                 refresh();
-                ++game->current_x;
+                ++game->current_y;
+                //если дошли до конца, сбросить.
+                if (game->current_y > game->field.Height) {
+                    game->current_figure = NONE;
+                }
+
                 begin = std::chrono::steady_clock::now();
             }
         } else if (game->current_state == IN_MENU) {
@@ -210,29 +217,30 @@ void ShowField(Game* game)
     }
 
     attron(COLOR_PAIR(POLITRA_FIELD));
-    for (int i = 0; i < game->height; ++i) {
-        for (int j = 0; j < game->width; ++j) {
-            move(i, j);
-            if (i >= game->current_x && i <= game->current_x + 3 &&
-                j >= game->current_y && j <= game->current_y + 3)
+    move(0, 1);
+    printw("+------------------+");
+    for (int j = 0; j < Field::Height; ++j) {
+        move(j + 1, 1);
+        addch('|');
+        for (int i = 0; i < Field::Width; ++i) {
+            const int diff_i = i + 1;
+            const int diff_j = j + 2;
+            if (game->field.data[i][j] ||
+                (diff_i >= game->current_x && diff_i <= game->current_x + 3 &&
+                 diff_j >= game->current_y && diff_j <= game->current_y + 3 &&
+                 (diff_j - game->current_y >= 0)))
             {
                 PrintFigurePoint(
                     game->current_figure,
-                    game->current_x - i,
-                    game->current_y - j);
+                    diff_i - game->current_x,
+                    diff_j - game->current_y);
             } else {
                 addch(' ');
             }
         }
+        addch('|');
     }
-
-    //move(0, 1);
-   // printw("+------------------+");
-   // for (int i = 1; i < 23; ++i) {
-    //    move(i, 1);
-    //    printw("|                  |");
-   // }
-   // move(23, 1);
+    move(23, 1);
     printw("+------------------+");
 
     move(0, 21);
