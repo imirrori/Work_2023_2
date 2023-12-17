@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "figures.h"
+#include "filed.h"
 
 #include <thread>
 
@@ -27,14 +28,6 @@ enum GAME_STATE
     IN_EXIT
 };
 
-struct Field
-{
-    static constexpr int Width = 18;
-    static constexpr int Height = 22;
-
-    bool data[Width][Height] = {};
-};
-
 struct Game
 {
     int width;
@@ -55,8 +48,6 @@ struct Game
 void InitGame(Game* game);
 void DeinitGame(Game* game);
 
-void ShowScreensaver(Game* game);
-void ShowMenu(Game* game);
-void ShowField(Game* game);
+void StartGame(Game* game);
 
 #endif // GAME_H
