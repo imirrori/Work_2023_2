@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include "figures.h"
-#include "filed.h"
+#include "field.h"
 
 #include <thread>
 
@@ -26,14 +26,6 @@ enum GAME_STATE
     IN_MENU,
     IN_GAME,
     IN_EXIT
-};
-
-struct CurrentFigure
-{
-    int x = 5;
-    int y = -4;
-    int type = NONE;
-    Figure data;
 };
 
 struct Game

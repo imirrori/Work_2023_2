@@ -46,7 +46,16 @@ constexpr Figure Figures[COUNT] = {
     }},
 };
 
+struct CurrentFigure
+{
+    int x = 0;
+    int y = 0;
+    int type = NONE;
+    Figure data;
+};
+
 Figure Rotate(Figure figure);
+
 int FindLeft(Figure figure);
 int FindRight(Figure figure);
 
