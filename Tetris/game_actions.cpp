@@ -3,6 +3,7 @@
 
 #include <ncurses.h>
 #include <stdlib.h>
+#include <string.h>
 
 bool MenuAction(Game* game, std::chrono::milliseconds ms)
 {
@@ -31,10 +32,11 @@ bool MenuAction(Game* game, std::chrono::milliseconds ms)
 
 bool GameAction(Game* game, std::chrono::milliseconds ms)
 {
-    if (game->current_figure == NONE) {
-        game->current_x = 5;
-        game->current_y = -4;
-        game->current_figure = game->next_figure;
+    if (game->current_figure.type == NONE) {
+        game->current_figure.x = 5;
+        game->current_figure.y = -4;
+        game->current_figure.type = game->next_figure;
+        game->current_figure.data.values = Figures[game->next_figure].values;
         game->next_figure = rand() % COUNT;
     }
 
@@ -42,10 +44,10 @@ bool GameAction(Game* game, std::chrono::milliseconds ms)
         clear();
         ShowField(game);
         refresh();
-        ++game->current_y;
+        ++game->current_figure.y;
         //если дошли до конца, сбросить.
-        if (game->current_y > game->field.Height) {
-            game->current_figure = NONE;
+        if (game->current_figure.y > game->field.Height) {
+            game->current_figure.type = NONE;
         }
         return true;
     }

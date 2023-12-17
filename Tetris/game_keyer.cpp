@@ -1,3 +1,5 @@
+#include "figures.h"
+
 #include "game_keyer.h"
 
 #include <ncurses.h>
@@ -37,7 +39,14 @@ void MenuKeyer(Game* game, int ch)
     }
 }
 
-void GameKeyer(Game*, int)
+void GameKeyer(Game* game, int ch)
 {
-
+    switch(ch)
+    {
+        case 10: //KEY_ENTER
+        {
+            game->current_figure.data = Rotate(game->current_figure.data);
+            break;
+        }
+    }
 }

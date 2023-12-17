@@ -56,9 +56,6 @@ void InitGame(Game* game)
     game->current_menu_option = START_GAME;
 
     game->next_figure = rand() % COUNT;
-    game->current_figure = NONE;
-    game->current_x = -4;
-    game->current_y = 5;
     game->figure_speed = 1;
 
     game->current_state = IN_MENU;

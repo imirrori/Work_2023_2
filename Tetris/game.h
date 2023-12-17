@@ -28,17 +28,23 @@ enum GAME_STATE
     IN_EXIT
 };
 
+struct CurrentFigure
+{
+    int x = 5;
+    int y = -4;
+    int type = NONE;
+    Figure data;
+};
+
 struct Game
 {
     int width;
     int height;
     int current_menu_option;
     Field field;
+    CurrentFigure current_figure;
 
     int next_figure;
-    int current_figure;
-    int current_x;
-    int current_y;
     int figure_speed;
 
     int current_state;

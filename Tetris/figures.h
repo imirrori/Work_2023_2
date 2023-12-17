@@ -1,6 +1,8 @@
 #ifndef FIGURES_H
 #define FIGURES_H
 
+#include <array>
+
 enum FIGURE_TYPE
 {
     NONE = -1,
@@ -14,33 +16,33 @@ enum FIGURE_TYPE
 
 struct Figure
 {
-    int values[4][4];
+    std::array<std::array<int, 4>, 4> values;
 };
 
 constexpr Figure Figures[COUNT] = {
     Figure{ .values = {
-        {0, 0, 0, 0},
-        {0, 1, 1, 0},
-        {0, 1, 1, 0},
-        {0, 0, 0, 0},
+        std::array<int, 4>{0, 0, 0, 0},
+        std::array<int, 4>{0, 1, 1, 0},
+        std::array<int, 4>{0, 1, 1, 0},
+        std::array<int, 4>{0, 0, 0, 0},
     }},
     Figure{ .values = {
-        {0, 1, 0, 0},
-        {0, 1, 0, 0},
-        {0, 1, 0, 0},
-        {0, 1, 0, 0},
+        std::array<int, 4>{0, 1, 0, 0},
+        std::array<int, 4>{0, 1, 0, 0},
+        std::array<int, 4>{0, 1, 0, 0},
+        std::array<int, 4>{0, 1, 0, 0},
     }},
     Figure{ .values = {
-        {0, 0, 0, 0},
-        {1, 1, 0, 0},
-        {0, 1, 1, 0},
-        {0, 0, 0, 0},
+        std::array<int, 4>{0, 0, 0, 0},
+        std::array<int, 4>{1, 1, 0, 0},
+        std::array<int, 4>{0, 1, 1, 0},
+        std::array<int, 4>{0, 0, 0, 0},
     }},
     Figure{ .values = {
-        {0, 0, 0, 0},
-        {0, 1, 1, 0},
-        {0, 1, 0, 0},
-        {0, 1, 0, 0},
+        std::array<int, 4>{0, 0, 0, 0},
+        std::array<int, 4>{0, 1, 1, 0},
+        std::array<int, 4>{0, 1, 0, 0},
+        std::array<int, 4>{0, 1, 0, 0},
     }},
 };
 

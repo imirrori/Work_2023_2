@@ -2,15 +2,15 @@
 
 #include <ncurses.h>
 
-void ShowFigurePoint(int figure, int x, int y)
+void ShowFigurePoint(Figure figure, int x, int y)
 {
-    if (Figures[figure].values[x][y]) {
+    if (figure.values[x][y]) {
         attron(COLOR_PAIR(POLITRA_FIGURE));
     } else {
         attron(COLOR_PAIR(POLITRA_FIELD));
     }
     addch(' ');
-    if (Figures[figure].values[x][y]) {
+    if (figure.values[x][y]) {
         attroff(COLOR_PAIR(POLITRA_FIGURE));
     } else {
         attroff(COLOR_PAIR(POLITRA_FIELD));
@@ -61,14 +61,14 @@ void ShowField(Game* game)
             const int diff_i = i + 1;
             const int diff_j = j + 2;
             if (game->field.data[i][j] ||
-                (diff_i >= game->current_x && diff_i <= game->current_x + 3 &&
-                 diff_j >= game->current_y && diff_j <= game->current_y + 3 &&
-                 (diff_j - game->current_y >= 0)))
+                (diff_i >= game->current_figure.x && diff_i <= game->current_figure.x + 3 &&
+                 diff_j >= game->current_figure.y && diff_j <= game->current_figure.y + 3 &&
+                 (diff_j - game->current_figure.y >= 0)))
             {
                 ShowFigurePoint(
-                    game->current_figure,
-                    diff_i - game->current_x,
-                    diff_j - game->current_y);
+                    game->current_figure.data,
+                    diff_i - game->current_figure.x,
+                    diff_j - game->current_figure.y);
             } else {
                 addch(' ');
             }
@@ -91,7 +91,10 @@ void ShowField(Game* game)
         move(4 + j, 21);
         printw("|   ");
         for(int i = 0; i < 4; ++i)
-            ShowFigurePoint(game->next_figure, i, j);
+            ShowFigurePoint(
+                Figures[game->next_figure],
+                i,
+                j);
         printw("       |");
     }
     move(8, 21);
