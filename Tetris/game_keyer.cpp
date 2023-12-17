@@ -48,5 +48,24 @@ void GameKeyer(Game* game, int ch)
             game->current_figure.data = Rotate(game->current_figure.data);
             break;
         }
+        case KEY_RIGHT:
+        {
+            if ((FindRight(game->current_figure.data) + game->current_figure.x) < (game->field.Width - 1)) {
+                ++game->current_figure.x;
+            }
+            break;
+        }
+        case KEY_LEFT:
+        {
+            if ((FindLeft(game->current_figure.data) + game->current_figure.x) > 0) {
+                --game->current_figure.x;
+            }
+            break;
+        }
+        case KEY_DOWN:
+        {
+            game->figure_speed = 5;
+            break;
+        }
     }
 }

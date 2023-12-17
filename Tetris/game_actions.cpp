@@ -33,14 +33,24 @@ bool MenuAction(Game* game, std::chrono::milliseconds ms)
 bool GameAction(Game* game, std::chrono::milliseconds ms)
 {
     if (game->current_figure.type == NONE) {
-        game->current_figure.x = 5;
+        game->current_figure.x = 9;
         game->current_figure.y = -4;
         game->current_figure.type = game->next_figure;
         game->current_figure.data.values = Figures[game->next_figure].values;
         game->next_figure = rand() % COUNT;
+        game->figure_speed = 1;
     }
 
-    if (ms.count() > 300) {
+    const int map[5] =
+    {
+        300,
+        200,
+        100,
+        50,
+        10,
+    };
+
+    if (ms.count() > map[game->figure_speed - 1]) {
         clear();
         ShowField(game);
         refresh();

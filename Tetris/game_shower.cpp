@@ -4,13 +4,13 @@
 
 void ShowFigurePoint(Figure figure, int x, int y)
 {
-    if (figure.values[x][y]) {
+    if (figure.values[y][x]) {
         attron(COLOR_PAIR(POLITRA_FIGURE));
     } else {
         attron(COLOR_PAIR(POLITRA_FIELD));
     }
     addch(' ');
-    if (figure.values[x][y]) {
+    if (figure.values[y][x]) {
         attroff(COLOR_PAIR(POLITRA_FIGURE));
     } else {
         attroff(COLOR_PAIR(POLITRA_FIELD));
@@ -58,7 +58,7 @@ void ShowField(Game* game)
         move(j + 1, 1);
         addch('|');
         for (int i = 0; i < Field::Width; ++i) {
-            const int diff_i = i + 1;
+            const int diff_i = i;
             const int diff_j = j + 2;
             if (game->field.data[i][j] ||
                 (diff_i >= game->current_figure.x && diff_i <= game->current_figure.x + 3 &&

@@ -47,5 +47,7 @@ constexpr Figure Figures[COUNT] = {
 };
 
 Figure Rotate(Figure figure);
+int FindLeft(Figure figure);
+int FindRight(Figure figure);
 
 #endif // FIGURES_H

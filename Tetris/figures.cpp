@@ -10,3 +10,30 @@ Figure Rotate(Figure figure)
     }
     return result;
 }
+
+int FindLeft(Figure figure)
+{
+    int min = 4;
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (figure.values[i][j]) {
+                min = std::min(min, j);
+            }
+        }
+    }
+    return min;
+}
+
+int FindRight(Figure figure)
+{
+    int max = 0;
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (figure.values[i][j]) {
+                max = std::max(max, j);
+            }
+        }
+    }
+    return max;
+}
+
